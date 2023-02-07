@@ -7,6 +7,7 @@ signupRouter.post("/", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(401).send({ res: "Please input Email and Password" });
+    return;
   }
   const userPresent = await UserModel.findOne({ email });
   if (userPresent) {
