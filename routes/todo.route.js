@@ -5,21 +5,21 @@ const { TodoModel } = require("../models/Todo.model");
 const { UserModel } = require("../models/User.model");
 const todoRouter = express.Router();
 
-todoRouter.get("/get", (req, res) => {
-  res.send("All todos");
+todoRouter.post("/", async (req, res) => {
+  const { userID } = req.body;
+  console.log("userID:", userID);
+  const todos = await TodoModel.find({ userID });
+  console.log("todos:", todos);
+  res.send({ todos });
 });
 
 todoRouter.post("/add", async (req, res) => {
-  const payload = req.body;
-  const userPresent = await UserModel.findOne({ _id: payload.userID });
-  if (!userPresent) {
-    res.status(404).send({ res: "Please Login First" });
-    return;
-  }
+  const { title, category, id, userID } = req.body;
   try {
-    const todo = new TodoModel(payload);
+    const todo = new TodoModel({ title, category, id, userID });
+    console.log("todo:", todo);
     await todo.save();
-    res.send({ res: "Added new todo" });
+    res.send({ res: "Added new todo", todo });
   } catch (err) {
     res.send({ res: err });
   }
